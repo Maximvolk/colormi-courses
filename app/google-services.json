@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "1057508619500",
+    "firebase_url": "https://colormi-courses.firebaseio.com",
+    "project_id": "colormi-courses",
+    "storage_bucket": "colormi-courses.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1057508619500:android:c43f7b249d6d3240b721c9",
+        "android_client_info": {
+          "package_name": "com.duwna.colormi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1057508619500-rpjumijqnmk0u7hnlqqmcc7jjgam9bml.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.duwna.colormi",
+            "certificate_hash": "4c809136311d0293d31ade82710f057236f3b039"
+          }
+        },
+        {
+          "client_id": "1057508619500-bhsr6vmue0gbk9rjo7le0aespt52af8k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDs0QQEztfvr-zCTd3bYbv_cZw2Yv3BwdU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1057508619500-bhsr6vmue0gbk9rjo7le0aespt52af8k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
