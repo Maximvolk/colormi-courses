@@ -7,6 +7,7 @@ jobs:
     environment:
       JVM_OPTS: -Xmx3200m
     steps:
+      - checkout
       - run:
           name: Download Dependencies
           command: ./gradlew androidDependencies
