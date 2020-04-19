@@ -10,7 +10,7 @@ jobs:
       - checkout
       - run:
           name: Download Dependencies
-          working_directory: ~/code/colormi-courses
+          # working_directory: ~/code/colormi-courses
           command: ./gradlew androidDependencies
       - save_cache:
           paths:
@@ -18,7 +18,7 @@ jobs:
           key: jars-{{ checksum "build.gradle" }}-{{ checksum  "app/build.gradle" }}
       - run:
           name: Build APK
-          working_directory: ~/code/colormi-courses
+          # working_directory: ~/code/colormi-courses
           command: ./gradlew assembleDebug
       - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/ 
           path: app/build/reports
