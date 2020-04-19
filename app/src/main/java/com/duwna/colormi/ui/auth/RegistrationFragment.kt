@@ -12,9 +12,9 @@ import com.duwna.colormi.R
 import com.duwna.colormi.models.User
 import com.duwna.colormi.repositories.AuthRepository
 import com.google.android.material.snackbar.Snackbar
-import kotlinx.android.synthetic.main.fragment_registration_second.*
+import kotlinx.android.synthetic.main.fragment_registration.*
 
-class RegistrationFragmentSecond : Fragment() {
+class RegistrationFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -22,25 +22,30 @@ class RegistrationFragmentSecond : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         setHasOptionsMenu(true)
-        return inflater.inflate(R.layout.fragment_registration_second, container, false)
+        return inflater.inflate(R.layout.fragment_registration, container, false)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        btn_registration.setOnClickListener { onRegisterClick() }
-        super.onActivityCreated(savedInstanceState)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        btn_register.setOnClickListener { onRegisterClick() }
+        super.onViewCreated(view, savedInstanceState)
+
+        et_first_name.setText("Firstname")
+        et_last_name.setText("Lastname")
+        et_phone.setText("+71111111111")
+        et_email.setText("email@mail.ru")
+        et_password.setText("password")
+        et_re_password.setText("password")
     }
 
     private fun onRegisterClick() {
-
         if (!isInputValid()) return
         val user = User(
             null,
             et_email.text.toString(),
-            arguments!!.getString("firstName")!!,
-            arguments!!.getString("phone")!!,
-            arguments!!.getString("lastName")!!
+            et_phone.text.toString(),
+            et_first_name.text.toString(),
+            et_last_name.text.toString()
         )
-
         setLoadingState(true)
         AuthRepository.registerUser(
             user,
@@ -51,8 +56,8 @@ class RegistrationFragmentSecond : Fragment() {
     }
 
     private fun onSuccess() {
-        findNavController().navigate(R.id.navigation_profile)
         setLoadingState(false)
+        findNavController().navigate(R.id.navigation_profile)
     }
 
     private fun onError(exception: Exception?) = try {
@@ -65,21 +70,28 @@ class RegistrationFragmentSecond : Fragment() {
     } catch (e: Exception) {
     }
 
-
     private fun isInputValid(): Boolean {
         var message: String? = null
         when {
-            et_email.text.isBlank() -> message = "Email не должен быть пустым."
-            et_password.text.length < 6 -> message = "Пароль должен содержать минимум 6 символов."
+            et_first_name.text.isBlank() ->
+                message = "Имя не должено быть пустым."
+            et_last_name.text.isBlank() ->
+                message = "Фамилия не должена быть пустым."
+            !et_phone.text.startsWith('+') || et_phone.text.length != 12 ->
+                message = "Телефон должен начинаться с '+' и содержать 11 цифр."
+            et_email.text.isBlank() ->
+                message = "Email не должен быть пустым."
+            !et_email.text.matches("[^@]+@[^.]+\\..+".toRegex()) ->
+                message = "Email не является валидным."
+            et_password.text.length < 6 ->
+                message = "Пароль должен содержать минимум 6 символов."
             et_password.text.toString() != et_re_password.text.toString() ->
                 message = "Пароли не совпадают."
         }
-        return if (message != null) {
-            Snackbar.make(container, message, Snackbar.LENGTH_LONG).show()
+        return message?.let {
+            Snackbar.make(container, it, Snackbar.LENGTH_LONG).show()
             false
-        } else {
-            true
-        }
+        } ?: true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -93,8 +105,7 @@ class RegistrationFragmentSecond : Fragment() {
     }
 
     private fun setLoadingState(isLoading: Boolean) {
-        card_view.isVisible = !isLoading
+        btn_register.isVisible = !isLoading
         progress_circular.isVisible = isLoading
     }
 }
-

@@ -2,14 +2,21 @@ package com.duwna.colormi.repositories
 
 import com.duwna.colormi.models.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestoreSettings
+import com.google.firebase.firestore.Source
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 object AuthRepository {
 
     private val auth = FirebaseAuth.getInstance()
-    val user get() = auth.currentUser
+    val firebaseUser get() = auth.currentUser
 
-    private val database = FirebaseDatabase.getInstance().reference
+    private val database = Firebase.firestore.apply {
+        firestoreSettings = FirebaseFirestoreSettings.Builder()
+            .setPersistenceEnabled(true)
+            .build()
+    }
 
     fun authUser(
         email: String,
@@ -34,18 +41,33 @@ object AuthRepository {
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
                     onComplete?.invoke()
-                    user.id = this.user?.uid
+                    user.id = this.firebaseUser?.uid
                     writeNewUserToDB(user)
-                }
-                else onError?.invoke(task.exception)
+                } else onError?.invoke(task.exception)
             }
     }
 
-    fun signOut() {
-        auth.signOut()
+    fun getUserInfo(
+        onComplete: ((user: User?) -> Unit)? = null,
+        onError: ((error: Exception?) -> Unit)? = null
+    ) {
+        if (firebaseUser != null) {
+            database.collection("users")
+                .document(firebaseUser?.uid!!)
+                .get(Source.DEFAULT)
+                .addOnSuccessListener {
+                    val user = it.toObject(User::class.java)
+                    onComplete?.invoke(user)
+                }.addOnFailureListener {
+                    onError?.invoke(it)
+                }
+        } else onError?.invoke(null)
     }
 
+    fun signOut() = auth.signOut()
+
     private fun writeNewUserToDB(user: User) {
-        database.child("User").push().setValue(user)
+        database.collection("users").document(user.id!!).set(user)
     }
+
 }
